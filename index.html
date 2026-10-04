@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartSummarizer – Text Summarization | TSA Lab Experiment 04</title>
+  <meta name="description" content="Extractive Text Summarization system for College Text and Speech Analysis lab experiment. Built with pure HTML, CSS, and JavaScript.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Header / Lab Identification -->
+    <header class="main-header">
+      <div class="header-badges">
+        <span class="badge badge-primary">
+          <span class="badge-dot"></span>
+          TEXT &amp; SPEECH ANALYSIS
+        </span>
+        <span class="badge badge-accent">Experiment 04 — Text Summarization</span>
+        <span class="badge badge-outline">Extractive NLP Engine</span>
+      </div>
+
+      <div class="title-container">
+        <div class="icon-orb">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div>
+          <h1 class="main-title">SmartSummarizer <span class="gradient-text">– Text Summarization</span></h1>
+          <p class="subtitle">Extracting salient sentences through statistical word-frequency scoring &amp; sentence ranking</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="main-content">
+      <!-- Input Section Card -->
+      <section class="card input-card">
+        <div class="card-header">
+          <div class="header-title-group">
+            <span class="section-num">01</span>
+            <div>
+              <h2>Input Document</h2>
+              <p>Paste or type your text paragraph below</p>
+            </div>
+          </div>
+          <div class="card-header-actions">
+            <button id="btnLoadExample" class="btn btn-secondary btn-sm" title="Load sample paragraph on AI & Healthcare">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              Load Example
+            </button>
+            <button id="btnClear" class="btn btn-ghost btn-sm" title="Clear input text">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="textarea-wrapper">
+          <textarea
+            id="inputText"
+            rows="10"
+            placeholder="Enter an article or paragraph..."
+            aria-label="Input article or paragraph for summarization"
+          ></textarea>
+          <div class="textarea-live-counter">
+            <span id="liveCharCount">0 characters</span>
+            <span class="counter-divider">•</span>
+            <span id="liveWordCount">0 words</span>
+            <span class="counter-divider">•</span>
+            <span id="liveSentCount">0 sentences</span>
+          </div>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="controls-panel">
+          <div class="slider-control-group">
+            <div class="slider-label-row">
+              <label for="lengthSlider" class="control-label">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+                Summary Length
+              </label>
+              <span id="sliderValueBadge" class="length-badge medium">Medium (~45%)</span>
+            </div>
+
+            <div class="range-container">
+              <input
+                type="range"
+                id="lengthSlider"
+                min="1"
+                max="3"
+                step="1"
+                value="2"
+                aria-label="Summary length options: Short, Medium, Long"
+              >
+              <div class="range-ticks">
+                <span class="tick-label" data-val="1">Short</span>
+                <span class="tick-label active" data-val="2">Medium</span>
+                <span class="tick-label" data-val="3">Long</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="summarize-btn-wrapper">
+            <button id="btnSummarize" class="btn btn-primary btn-glow">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              Summarize Now
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results & Metrics Section -->
+      <section id="resultsSection" class="results-container" style="display: none;">
+        <!-- Metrics Stats Cards Bar -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon metric-purple">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+            </div>
+            <div class="metric-info">
+              <span class="metric-title">Original Words</span>
+              <span id="metricOrigWords" class="metric-val">0</span>
+              <span id="metricOrigSentences" class="metric-sub">0 sentences</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon metric-blue">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 11 12 14 22 4"></polyline>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+            </div>
+            <div class="metric-info">
+              <span class="metric-title">Summary Words</span>
+              <span id="metricSummWords" class="metric-val">0</span>
+              <span id="metricSummSentences" class="metric-sub">0 sentences</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon metric-green">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 14 14"></polyline>
+              </svg>
+            </div>
+            <div class="metric-info">
+              <span class="metric-title">Sentences Retained</span>
+              <span id="metricSentenceRatio" class="metric-val">0 / 0</span>
+              <span id="metricSentencePct" class="metric-sub">0% of total</span>
+            </div>
+          </div>
+
+          <div class="metric-card compression-card">
+            <div class="metric-icon metric-orange">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="4 14 10 14 10 20"></polyline>
+                <polyline points="20 10 14 10 14 4"></polyline>
+                <line x1="14" y1="10" x2="21" y2="3"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+            </div>
+            <div class="metric-info">
+              <span class="metric-title">Compression</span>
+              <span id="metricCompression" class="metric-val">0%</span>
+              <div class="compression-bar-track">
+                <div id="compressionBarFill" class="compression-bar-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Display Cards (Dual View) -->
+        <div class="results-view-tabs">
+          <button class="view-tab-btn active" data-target="tab-summary">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+            </svg>
+            Summary &amp; Original View
+          </button>
+          <button class="view-tab-btn" data-target="tab-inspector">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            Sentence Scoring Inspector
+          </button>
+          <button class="view-tab-btn" data-target="tab-keywords">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            Word Frequency Matrix
+          </button>
+        </div>
+
+        <!-- Tab 1: Summary & Original -->
+        <div id="tab-summary" class="tab-pane active">
+          <div class="comparison-grid">
+            <!-- Generated Summary Card (Prominent) -->
+            <div class="card result-card summary-card">
+              <div class="card-header">
+                <div class="header-title-group">
+                  <div class="status-indicator"></div>
+                  <div>
+                    <h2>Generated Summary</h2>
+                    <p>Extracted high-impact sentences in chronological sequence</p>
+                  </div>
+                </div>
+                <button id="btnCopySummary" class="btn btn-secondary btn-sm" title="Copy summary text">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span id="copyBtnText">Copy</span>
+                </button>
+              </div>
+
+              <div class="summary-body">
+                <div id="summaryTextOutput" class="summary-content"></div>
+              </div>
+
+              <div class="card-footer summary-footer">
+                <span class="retention-pill" id="retentionPill">
+                  Extracted <span id="summarySentCountBadge">0</span> of <span id="originalSentCountBadge">0</span> sentences
+                </span>
+                <span class="reading-time" id="readingTimeBadge">⏱️ ~1 min read</span>
+              </div>
+            </div>
+
+            <!-- Original Text Card with Extracted Highlights -->
+            <div class="card result-card original-card">
+              <div class="card-header">
+                <div class="header-title-group">
+                  <span class="section-num alt">02</span>
+                  <div>
+                    <h2>Original Text</h2>
+                    <p>Green highlighted spans mark sentences selected for the summary</p>
+                  </div>
+                </div>
+                <label class="toggle-switch" title="Toggle highlight visibility">
+                  <input type="checkbox" id="toggleHighlights" checked>
+                  <span class="slider"></span>
+                  <span class="toggle-text">Highlights</span>
+                </label>
+              </div>
+
+              <div class="original-body">
+                <div id="originalHighlightedOutput" class="original-content"></div>
+              </div>
+
+              <div class="card-footer original-footer">
+                <span class="legend-item">
+                  <span class="legend-color-box selected"></span> Selected Sentence
+                </span>
+                <span class="legend-item">
+                  <span class="legend-color-box unselected"></span> Omitted Sentence
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Scoring Inspector -->
+        <div id="tab-inspector" class="tab-pane">
+          <div class="card inspector-card">
+            <div class="card-header">
+              <div>
+                <h2>Sentence Scoring &amp; Selection Inspector</h2>
+                <p>Detailed view of every sentence, its computed statistical score, and whether it was selected</p>
+              </div>
+              <span class="badge badge-accent">Ranking Table</span>
+            </div>
+            <div class="table-responsive">
+              <table class="inspector-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Sentence Content</th>
+                    <th>Word Count</th>
+                    <th>Raw Score</th>
+                    <th>Normalized Score</th>
+                    <th>Rank</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="inspectorTableBody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Word Frequency Matrix -->
+        <div id="tab-keywords" class="tab-pane">
+          <div class="card keywords-card">
+            <div class="card-header">
+              <div>
+                <h2>Key Term Frequencies</h2>
+                <p>Top non-stop words with their computed frequencies used to score sentences</p>
+              </div>
+              <span class="badge badge-outline" id="vocabCountBadge">0 unique keywords</span>
+            </div>
+            <div id="keywordTagsContainer" class="keyword-tags-grid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Educational & Lab Explanation Section -->
+      <section class="card explanation-card">
+        <div class="card-header">
+          <div class="header-title-group">
+            <span class="section-num">03</span>
+            <div>
+              <h2>Laboratory Concept &amp; Algorithm Formulation</h2>
+              <p>Theoretical foundation of Extractive Text Summarization</p>
+            </div>
+          </div>
+          <span class="badge badge-primary">NLP Theory</span>
+        </div>
+
+        <!-- Definition Quote Box -->
+        <div class="concept-callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <strong>Definition:</strong>
+            <p>“Text summarization automatically reduces a long document into a shorter version while preserving its important information.”</p>
+          </div>
+        </div>
+
+        <!-- Method distinction banner -->
+        <div class="approach-banner">
+          <div class="approach-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </div>
+          <div class="approach-info">
+            <h3>Extractive vs. Abstractive Summarization</h3>
+            <p>
+              This project implements an <strong>extractive summarization</strong> algorithm. Unlike <em>abstractive summarization</em> (which generates brand-new paraphrased sentences using heavy language models), <strong>extractive summarization</strong> scores, extracts, and combines the most statistically significant original sentences directly from the source passage. This guarantees 100% factual accuracy, zero hallucination, and high computational efficiency.
+            </p>
+          </div>
+        </div>
+
+        <!-- 7-Step Pipeline Grid -->
+        <h3 class="pipeline-section-title">The 7-Step Extractive Summarization Pipeline</h3>
+        <div class="pipeline-grid">
+          <div class="pipeline-step">
+            <div class="step-badge">1</div>
+            <h4>Sentence Segmentation</h4>
+            <p>Splits continuous raw text into distinct sentence units using regular expression boundary matching on punctuation (<code>.</code>, <code>!</code>, <code>?</code>), while protecting numerical figures and common abbreviations.</p>
+          </div>
+
+          <div class="pipeline-step">
+            <div class="step-badge">2</div>
+            <h4>Word Tokenization</h4>
+            <p>Isolates individual words from each sentence, converts characters to lowercase, and strips away punctuation marks, brackets, and extraneous symbols.</p>
+          </div>
+
+          <div class="pipeline-step">
+            <div class="step-badge">3</div>
+            <h4>Stop Word Filtering</h4>
+            <p>Discards frequent grammatical glue words (e.g., <em>the, is, at, which, on, and, have</em>) using an exhaustive English stop words lexicon so only semantically informative content words remain.</p>
+          </div>
+
+          <div class="pipeline-step">
+            <div class="step-badge">4</div>
+            <h4>Word Frequency Calculation</h4>
+            <p>Computes the term frequency \( f(w) \) of each retained word across the passage, and normalizes it relative to the most frequent word: \( W_{norm}(w) = \frac{f(w)}{f_{max}} \).</p>
+          </div>
+
+          <div class="pipeline-step">
+            <div class="step-badge">5</div>
+            <h4>Sentence Scoring</h4>
+            <p>Calculates each sentence's significance score by summing the weights of its constituent content words, balanced by sentence length normalization to avoid bias toward disproportionately long run-on sentences.</p>
+          </div>
+
+          <div class="pipeline-step">
+            <div class="step-badge">6</div>
+            <h4>Top-K Sentence Selection</h4>
+            <p>Sorts all sentences by their calculated significance score in descending order, and extracts the top \( K \) sentences according to the user-selected summary length (Short, Medium, or Long).</p>
+          </div>
+
+          <div class="pipeline-step full-width">
+            <div class="step-badge">7</div>
+            <h4>Chronological Order Preservation</h4>
+            <p>Re-sorts the extracted top sentences according to their original sequential position in the source text. This preserves narrative cohesion, logical progression, and conversational flow in the final summary.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div>
+          <strong>SmartSummarizer</strong> &bull; Text &amp; Speech Analysis Laboratory
+        </div>
+        <div class="footer-meta">
+          <span>Experiment 04</span>
+          <span>&bull;</span>
+          <span>Extractive Text Summarization System</span>
+          <span>&bull;</span>
+          <span>Client-Side NLP (Vanilla JS)</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
